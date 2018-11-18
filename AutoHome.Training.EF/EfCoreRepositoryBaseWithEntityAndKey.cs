@@ -1,7 +1,12 @@
 ﻿using AutoHome.Training.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,57 +16,119 @@ namespace AutoHome.Training.EF
         RepositoryBase<TEntity, TPrimaryKey>,
         IRepositoryWithDbContext
 
-        where TEntity : class
+        where TEntity : class, IEntity<TPrimaryKey>
         where TDbContext : DbContext
     {
-        public override Task DeleteAsync(TPrimaryKey Id)
+        private readonly TDbContext _dbContext;
+        public EfCoreRepositoryBase(TDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+        }
+        public virtual DbSet<TEntity> Table => Context.Set<TEntity>();
+
+        //public virtual DbTransaction Transaction
+        //{
+        //    get
+        //    {
+        //        return (DbTransaction)_dbContext?.Database.CurrentTransaction?.GetDbTransaction();
+        //    }
+        //}
+
+        public virtual DbConnection Connection
+        {
+            get
+            {
+                var connection = Context.Database.GetDbConnection();
+
+                if (connection.State != ConnectionState.Open)
+                {
+                    connection.Open();
+                }
+
+                return connection;
+            }
+        }
+        public async override Task DeleteAsync(TPrimaryKey id)
+        {
+            var entity = GetFromChangeTrackerOrNull(id);
+            if (entity != null)
+            {
+                AttachIfNot(entity);
+                Table.Remove(entity);
+                return ;
+            }
+
+            entity = await FirstOrDefaultQueryble(id);
+            if (entity != null)
+            {
+                AttachIfNot(entity);
+                Table.Remove(entity);
+                return;
+            }
         }
 
-        public override Task<IEnumerable<TEntity>> ExecQuerySP(string SPName)
+        public override IQueryable<TEntity> GetAll()
         {
-            throw new NotImplementedException();
+            return GetAllIncluding();
         }
 
-        public override IEnumerable<TEntity> GetAll()
+        public DbContext GetDbContext() => _dbContext;
+        /// <summary>
+        /// for subclass override getting the Context
+        /// </summary>
+        public virtual TDbContext Context => _dbContext;
+
+        public override Task<IQueryable<TEntity>> GetListPage(int pageNumber, int rowsPerPage, string strWhere, string orderBy, object parameters)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(Table.Skip((pageNumber - 1) * rowsPerPage).Take(rowsPerPage));
         }
 
-        public DbContext GetDbContext()
+        public override Task<TPrimaryKey> InsertAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(Table.Add(entity).Entity.Id);
         }
 
-        public override Task<IEnumerable<TEntity>> GetListAsync(string strWhere, object parameters = null)
-        {
-            throw new NotImplementedException();
-        }
 
-        public override Task<IEnumerable<TEntity>> GetListAsync(object whereConditions)
+        public override Task UpdateAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            AttachIfNot(entity);
+            Context.Entry(entity).State = EntityState.Modified;
+            return Task.CompletedTask;
         }
-
-        public override Task<IEnumerable<TEntity>> GetListPage(int pageNumber, int rowsPerPage, string strWhere, string orderBy, object parameters)
+        private TEntity GetFromChangeTrackerOrNull(TPrimaryKey id)
         {
-            throw new NotImplementedException();
+            var entry = Context.ChangeTracker.Entries()
+                .FirstOrDefault(
+                    ent =>
+                        ent.Entity is TEntity &&
+                        EqualityComparer<TPrimaryKey>.Default.Equals(id, (ent.Entity as TEntity).Id)
+                );
+
+            return entry?.Entity as TEntity;
         }
-
-        public override Task<int?> InsertAsync(TEntity entity)
+        protected virtual void AttachIfNot(TEntity entity)
         {
-            throw new NotImplementedException();
+            var entry = Context.ChangeTracker.Entries().FirstOrDefault(ent => ent.Entity == entity);
+            if (entry != null)
+            {
+                return;
+            }
+
+            Table.Attach(entity);
         }
-
-        public override Task<IEnumerable<TEntity>> QueryAsync(string sql, object param = null)
+        public override IQueryable<TEntity> GetAllIncluding(params Expression<Func<TEntity, object>>[] propertySelectors)
         {
-            throw new NotImplementedException();
-        }
+            var query = Table.AsQueryable();
 
-        public override Task Update(TEntity entity)
-        {
-            throw new NotImplementedException();
+            if (propertySelectors != null && propertySelectors.Any())
+            {
+                foreach (var propertySelector in propertySelectors)
+                {
+                    query = query.Include(propertySelector);
+                }
+            }
+
+            return query;
         }
     }
 }

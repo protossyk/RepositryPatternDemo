@@ -6,5 +6,6 @@ namespace AutoHome.Training.Model
 {
     public class ProductDetailInfo
     {
+        public int ProductId { get; set; }
     }
 }

@@ -52,6 +52,10 @@ namespace AutoHome.Training.Dapper
         {
             return Connection.GetList<TEntity>();
         }
+        public override Task<IEnumerable<TEntity>> GetAllAsync()
+        {
+            return Connection.GetListAsync<TEntity>();
+        }
 
         public override IEnumerable<TEntity> Query(string query, object parameters = null)
         {
@@ -104,6 +108,11 @@ namespace AutoHome.Training.Dapper
             TPrimaryKey primaryKey = Connection.Insert<TPrimaryKey, TEntity>(entity);
 
             return primaryKey;
+        }
+
+        public override Task<TPrimaryKey> InsertAndGetIdAsync(TEntity entity)
+        {
+            return  Connection.InsertAsync<TPrimaryKey, TEntity>(entity);
         }
     }
 }

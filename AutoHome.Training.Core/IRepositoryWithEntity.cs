@@ -4,8 +4,7 @@ using System.Text;
 
 namespace AutoHome.Training.Core
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IRepositoryBase<TEntity> : IRepositoryBase<TEntity, int> where TEntity : class, IEntity<int>
     {
-        void SaveChanges();
     }
 }

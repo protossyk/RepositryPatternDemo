@@ -12,9 +12,8 @@ namespace AutoHome.Training.Core
     {
         public abstract Task DeleteAsync(TPrimaryKey Id);
 
-        public abstract Task<IEnumerable<TEntity>> ExecQuerySP(string SPName);
 
-        public async Task<TEntity> Get(TPrimaryKey Id)
+        public virtual async Task<TEntity> Get(TPrimaryKey Id)
         {
             var entity = await FirstOrDefault(Id);
             if (entity == null)
@@ -25,35 +24,49 @@ namespace AutoHome.Training.Core
             return entity;
         }
 
-        public abstract Task<IEnumerable<TEntity>> GetListAsync(string strWhere, object parameters = null);
 
-        public abstract Task<IEnumerable<TEntity>> GetListAsync(object whereConditions);
-
-        public abstract Task<IEnumerable<TEntity>> 
+        public abstract Task<IQueryable<TEntity>> 
             GetListPage(int pageNumber, int rowsPerPage, string strWhere, string orderBy, object parameters);
 
-        public abstract Task<int?> InsertAsync(TEntity entity);
+        public abstract Task<TPrimaryKey> InsertAsync(TEntity entity);
 
-        public abstract Task<IEnumerable<TEntity>> QueryAsync(string sql, object param = null);
-
-        public abstract Task Update(TEntity entity);
+        public abstract Task UpdateAsync(TEntity entity);
         public virtual Task<TEntity> FirstOrDefault(TPrimaryKey id)
         {
             return Task.FromResult(GetAll().FirstOrDefault());
         }
+        public virtual Task<TEntity> FirstOrDefaultQueryble(TPrimaryKey id)
+        {
+            return Task.FromResult(GetAll().FirstOrDefault(CreateEqualityExpressionForId(id)));
+        }
 
-        //protected virtual Expression<Func<TEntity, bool>> CreateEqualityExpressionForId(TPrimaryKey id)
-        //{
-        //    var lambdaParam = Expression.Parameter(typeof(TEntity));
+        protected virtual Expression<Func<TEntity, bool>> CreateEqualityExpressionForId(TPrimaryKey id)
+        {
+            var lambdaParam = Expression.Parameter(typeof(TEntity));
 
-        //    var lambdaBody = Expression.Equal(
-        //        Expression.PropertyOrField(lambdaParam, "Id"),
-        //        Expression.Constant(id, typeof(TPrimaryKey))
-        //        );
+            var lambdaBody = Expression.Equal(
+                Expression.PropertyOrField(lambdaParam, "Id"),
+                Expression.Constant(id, typeof(TPrimaryKey))
+                );
 
-        //    return Expression.Lambda<Func<TEntity, bool>>(lambdaBody, lambdaParam);
-        //}
+            return Expression.Lambda<Func<TEntity, bool>>(lambdaBody, lambdaParam);
+        }
 
-        public abstract IEnumerable<TEntity> GetAll();
+        public abstract IQueryable<TEntity> GetAll();
+
+        public virtual List<TEntity> GetAllList(Expression<Func<TEntity, bool>> predicate)
+        {
+            return GetAll().Where(predicate).ToList();
+        }
+
+        public virtual Task<List<TEntity>> GetAllListAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return Task.FromResult(GetAll().Where(predicate).ToList());
+        }
+
+        public virtual IQueryable<TEntity> GetAllIncluding(params Expression<Func<TEntity, object>>[] propertySelectors)
+        {
+            return GetAll();
+        }
     }
 }
