@@ -1,7 +1,8 @@
-﻿using AutoHome.Training.Core;
+﻿using AutoHome.Training.Core.Repositories;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 

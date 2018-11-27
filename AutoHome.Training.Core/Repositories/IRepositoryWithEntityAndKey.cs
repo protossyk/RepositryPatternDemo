@@ -1,13 +1,14 @@
-﻿using System;
+﻿using AutoHome.Training.Core.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoHome.Training.Core
+namespace AutoHome.Training.Core.Repositories
 {
-    public interface IRepositoryBase<TEntity, TPrimaryKey> : IRepositoryBase where TEntity : class
+    public interface IRepositoryBase<TEntity, TPrimaryKey> : IRepositoryBase where TEntity :class, IEntity<TPrimaryKey>
     {
         #region  成员方法
         /// <summary>

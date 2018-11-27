@@ -9,6 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AutoHome.Training.Repository;
+using AutoHome.Training.Core.Events;
+using AutoHome.Training.RabbitMq;
+using Microsoft.Extensions.Logging;
+using EasyNetQ;
+using Microsoft.Extensions.Options;
+using AutoHome.Training.PortalDemo.Events;
+using AutoHome.Training.PortalDemo.EventHandlers;
 
 namespace AutoHome.Training.PortalDemo
 {
@@ -31,8 +38,25 @@ namespace AutoHome.Training.PortalDemo
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+            //注入RabbitMQ的EasyNetQ,直接在构造函数内使用IBus单例
+            services.AddSingleton<IBus>(service =>
+            {
+                var connection = Configuration.GetSection("RabbitMQConnection").Value;
 
 
+                return RabbitHutch.CreateBus(connection);
+            });
+            //注册EventBus
+            services.AddSingleton<IEventExecutContext, EventExecuteContext>();
+            services.AddSingleton<Core.Events.IEventBus, RabbitMqEventBus>(
+                provider => new RabbitMqEventBus(
+                    provider.GetService<IEventExecutContext>(),
+                    provider.GetService<ILogger<RabbitMqEventBus>>(),
+                     provider.GetService<IBus>()
+                    )
+                );
+            //执行订阅
+            ConfigureEventBus(services.BuildServiceProvider());
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -52,6 +76,17 @@ namespace AutoHome.Training.PortalDemo
             app.UseCookiePolicy();
 
             app.UseMvc();
+
+
+        }
+        /// <summary>
+        /// 配置事件总线
+        /// </summary>
+        /// <param name="app"></param>
+        public void ConfigureEventBus(IServiceProvider sp)
+        {
+            var eventBus = sp.GetService<Core.Events.IEventBus>();
+            eventBus.Subscribe<OrderConfirmedEventData, OrderConfirmedEventHandler>();
         }
     }
 }

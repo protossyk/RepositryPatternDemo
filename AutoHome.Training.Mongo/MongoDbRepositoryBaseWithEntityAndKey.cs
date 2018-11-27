@@ -46,7 +46,8 @@ namespace AutoHome.Training.Mongo
 
         public override Task<IQueryable<TEntity>> GetListPage(int pageNumber, int rowsPerPage, string strWhere, string orderBy, object parameters)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(Collection.FindAll().Skip((pageNumber - 1) * rowsPerPage).Take(rowsPerPage)
+                .AsQueryable());
         }
 
         public override Task<TPrimaryKey> InsertAsync(TEntity entity)

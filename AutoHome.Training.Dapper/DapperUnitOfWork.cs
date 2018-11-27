@@ -1,4 +1,4 @@
-﻿using AutoHome.Training.Core;
+﻿using AutoHome.Training.Core.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Text;

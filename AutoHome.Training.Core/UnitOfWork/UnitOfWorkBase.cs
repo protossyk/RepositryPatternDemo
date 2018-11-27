@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AutoHome.Training.Core
+namespace AutoHome.Training.Core.UnitOfWork
 {
     /// <summary>
     /// base implement for all uow classes

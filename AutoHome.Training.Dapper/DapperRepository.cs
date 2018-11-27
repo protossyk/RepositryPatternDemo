@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
@@ -24,11 +25,15 @@ namespace AutoHome.Training.Dapper
         {
             get { return (DbConnection)_context.Conn; }
         }
+        public virtual IDbTransaction DbTransaction
+        {
+            get { return _context.Tran; }
+        }
 
 
         public override TEntity Single(TPrimaryKey id)
         {
-            return Connection.Get<TEntity>(id);
+            return Connection.Get<TEntity>(id, DbTransaction);
         }
 
         public override TEntity FirstOrDefault(TPrimaryKey id)
@@ -37,7 +42,7 @@ namespace AutoHome.Training.Dapper
             return Connection.GetList<TEntity>(whereStr, new
             {
                 Id = id
-            })?.FirstOrDefault();
+            }, DbTransaction)?.FirstOrDefault();
         }
 
         public override TEntity Get(TPrimaryKey id)
@@ -50,41 +55,42 @@ namespace AutoHome.Training.Dapper
 
         public override IEnumerable<TEntity> GetAll()
         {
-            return Connection.GetList<TEntity>();
+            return Connection.GetList<TEntity>(DbTransaction);
         }
         public override Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return Connection.GetListAsync<TEntity>();
+            return Connection.GetListAsync<TEntity>(DbTransaction);
         }
 
-        public override IEnumerable<TEntity> Query(string query, object parameters = null)
+        public override IEnumerable<TEntity> Query
+            (string query, object parameters = null)
         {
-            return Connection.Query<TEntity>(query, parameters);
+            return Connection.Query<TEntity>(query, parameters, transaction:DbTransaction);
         }
 
         public override Task<IEnumerable<TEntity>> QueryAsync(string query, object parameters = null)
         {
-            return Connection.QueryAsync<TEntity>(query, parameters);
+            return Connection.QueryAsync<TEntity>(query, parameters, DbTransaction);
         }
 
         public override IEnumerable<TAny> Query<TAny>(string query, object parameters = null)
         {
-            return Connection.Query<TAny>(query, parameters);
+            return Connection.Query<TAny>(query, parameters, DbTransaction);
         }
 
         public override Task<IEnumerable<TAny>> QueryAsync<TAny>(string query, object parameters = null)
         {
-            return Connection.QueryAsync<TAny>(query, parameters);
+            return Connection.QueryAsync<TAny>(query, parameters, DbTransaction);
         }
 
         public override int Execute(string query, object parameters = null)
         {
-            return Connection.Execute(query, parameters);
+            return Connection.Execute(query, parameters, DbTransaction);
         }
 
         public override Task<int> ExecuteAsync(string query, object parameters = null)
         {
-            return Connection.ExecuteAsync(query, parameters);
+            return Connection.ExecuteAsync(query, parameters, DbTransaction);
         }
 
 
@@ -95,12 +101,12 @@ namespace AutoHome.Training.Dapper
 
         public override void Update(TEntity entity)
         {
-            Connection.Update(entity);
+            Connection.Update(entity, DbTransaction);
         }
 
         public override void Delete(TEntity entity)
         {
-            Connection.Delete(entity);
+            Connection.Delete(entity, DbTransaction);
         }
 
         public override TPrimaryKey InsertAndGetId(TEntity entity)
@@ -112,7 +118,7 @@ namespace AutoHome.Training.Dapper
 
         public override Task<TPrimaryKey> InsertAndGetIdAsync(TEntity entity)
         {
-            return  Connection.InsertAsync<TPrimaryKey, TEntity>(entity);
+            return  Connection.InsertAsync<TPrimaryKey, TEntity>(entity, DbTransaction);
         }
     }
 }

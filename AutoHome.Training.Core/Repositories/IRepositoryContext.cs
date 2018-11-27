@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AutoHome.Training.Core
+namespace AutoHome.Training.Core.Repositories
 {
     /// <summary>
     /// 数据层访问基础设施的适配器标记接口

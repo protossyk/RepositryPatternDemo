@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AutoHome.Training.RabbitMqEventBus\AutoHome.Training.RabbitMq.csproj" />
     <ProjectReference Include="..\AutoHome.Training.Repository\AutoHome.Training.Repository.csproj" />
   </ItemGroup>
 

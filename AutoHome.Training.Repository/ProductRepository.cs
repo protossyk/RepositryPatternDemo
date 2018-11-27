@@ -1,11 +1,11 @@
-﻿using AutoHome.Training.Core;
-using AutoHome.Training.Dapper;
+﻿using AutoHome.Training.Dapper;
 using AutoHome.Training.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using AutoHome.Training.Core.UnitOfWork;
 
 namespace AutoHome.Training.Repository
 {

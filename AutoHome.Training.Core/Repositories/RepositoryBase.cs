@@ -1,14 +1,15 @@
-﻿using System;
+﻿using AutoHome.Training.Core.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoHome.Training.Core
+namespace AutoHome.Training.Core.Repositories
 {
     public abstract class RepositoryBase<TEntity, TPrimaryKey> : IRepositoryBase<TEntity, TPrimaryKey>
-        where TEntity : class
+        where TEntity : class,IEntity<TPrimaryKey>
     {
         public abstract Task DeleteAsync(TPrimaryKey Id);
 

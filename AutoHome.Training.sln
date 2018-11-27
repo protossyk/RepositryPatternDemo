@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoHome.Training.PortalDem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoHome.Training.EF", "AutoHome.Training.EF\AutoHome.Training.EF.csproj", "{CEBD3416-9477-416E-87AC-7271BA3555B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoHome.Training.Mongo", "AutoHome.Training.Mongo\AutoHome.Training.Mongo.csproj", "{E52D9424-3770-48D5-864F-49DD34854D3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoHome.Training.Mongo", "AutoHome.Training.Mongo\AutoHome.Training.Mongo.csproj", "{E52D9424-3770-48D5-864F-49DD34854D3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoHome.Training.RabbitMq", "AutoHome.Training.RabbitMqEventBus\AutoHome.Training.RabbitMq.csproj", "{06AC10CF-CE5C-44B8-B3FE-4FFB4B338B68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{E52D9424-3770-48D5-864F-49DD34854D3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E52D9424-3770-48D5-864F-49DD34854D3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E52D9424-3770-48D5-864F-49DD34854D3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06AC10CF-CE5C-44B8-B3FE-4FFB4B338B68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06AC10CF-CE5C-44B8-B3FE-4FFB4B338B68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06AC10CF-CE5C-44B8-B3FE-4FFB4B338B68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06AC10CF-CE5C-44B8-B3FE-4FFB4B338B68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

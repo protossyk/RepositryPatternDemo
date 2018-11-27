@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AutoHome.Training.Core
+namespace AutoHome.Training.Core.Entities
 {
+
     public interface IEntity<TPrimaryKey>
     {
         /// <summary>
