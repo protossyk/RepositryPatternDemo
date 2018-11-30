@@ -17,8 +17,9 @@ namespace AutoHome.Training.Core.Events
         public event EventHandler<string> OnEventRemoved;
         private readonly IServiceProvider _iServiceProvider;
 
-        public EventExecuteContext()
+        public EventExecuteContext(IServiceProvider serviceProvider)
         {
+            _iServiceProvider = serviceProvider;
             _handlers = new Dictionary<string, List<Type>>();
             _eventTypes = new List<Type>();
         }

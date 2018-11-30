@@ -29,6 +29,7 @@ namespace AutoHome.Training.Dapper
                     if (_conn == null)
                     {
                         _conn = _dbProviderFactory.CreateConnection();
+                        _conn.ConnectionString = _connectionStr;
                         _conn.Open();
                     }
                 }

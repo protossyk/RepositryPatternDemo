@@ -47,7 +47,9 @@ namespace AutoHome.Training.PortalDemo
                 return RabbitHutch.CreateBus(connection);
             });
             //×¢²áEventBus
-            services.AddSingleton<IEventExecutContext, EventExecuteContext>();
+            services.AddSingleton<IEventExecutContext, EventExecuteContext>(sp=> {
+                return new EventExecuteContext(sp);
+            });
             services.AddSingleton<Core.Events.IEventBus, RabbitMqEventBus>(
                 provider => new RabbitMqEventBus(
                     provider.GetService<IEventExecutContext>(),
