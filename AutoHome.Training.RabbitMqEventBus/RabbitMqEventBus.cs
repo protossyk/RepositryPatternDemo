@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AutoHome.Training.RabbitMq
 {
-    public class RabbitMqEventBus : BaseEventBus
+    public class RabbitMqEventBus : BaseEventBus, IRabbitMqEventBus
     {
         private readonly IEventExecutContext _eventExecutContext;
         private bool disposed = false;

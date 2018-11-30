@@ -1,4 +1,6 @@
 ﻿using AutoHome.Training.Core;
+using AutoHome.Training.Core.Entities;
+using AutoHome.Training.Core.Repositories;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System;
