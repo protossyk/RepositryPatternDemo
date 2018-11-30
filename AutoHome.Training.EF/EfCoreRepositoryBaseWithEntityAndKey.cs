@@ -1,4 +1,6 @@
 ﻿using AutoHome.Training.Core;
+using AutoHome.Training.Core.Entities;
+using AutoHome.Training.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
