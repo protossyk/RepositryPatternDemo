@@ -1,4 +1,5 @@
 ﻿using AutoHome.Training.Core;
+using AutoHome.Training.Core.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
